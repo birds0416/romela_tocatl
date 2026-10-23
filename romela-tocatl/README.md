@@ -1,6 +1,6 @@
 # TOCATL Hexapod
 
-Private recovery and redevelopment repository for the RoMeLa TOCATL spider
+Recovery and redevelopment repository for the RoMeLa TOCATL spider
 platform. The recovered March 2026 deployment is preserved under `legacy/`; new
 work should happen in the ROS 2 packages under `src/`.
 
