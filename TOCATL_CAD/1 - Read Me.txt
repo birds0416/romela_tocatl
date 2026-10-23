@@ -1,0 +1,2 @@
+Production v1.4 is a print-ready collection of all 3D models required to manufacture all structural components of the robotic hexapod. 
+All parts have been tested, assembled, and fit checked. 

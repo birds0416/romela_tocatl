@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>tocatl_diagnostics</name>
+  <version>0.1.0</version>
+  <description>Offline-safe TOCATL hardware inventory tools</description>
+  <maintainer email="matthewhutchinson@ucla.edu">Matthew Hutchinson</maintainer>
+  <license>MIT</license>
+  <depend>tocatl_control</depend>
+  <test_depend>python3-pytest</test_depend>
+  <export><build_type>ament_python</build_type></export>
+</package>

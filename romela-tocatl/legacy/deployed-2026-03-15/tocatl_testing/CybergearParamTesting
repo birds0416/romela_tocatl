@@ -1,0 +1,21 @@
+from CyberGearDriver import CyberGearMotor, CyberMotorMessage
+import can, time
+
+bus = can.interface.Bus(interface='socketcan', channel='can0')
+
+def send(msg):
+    bus.send(can.Message(
+        arbitration_id=msg.arbitration_id,
+        data=msg.data,
+        is_extended_id=True
+    ))
+
+m = CyberGearMotor(11, send)
+
+def dump_param(name):
+    m.request_parameter(name)
+    time.sleep(0.05)
+    print(name, "=", m.params.get(name))
+
+for p in ["MechOffset", "MechPos_init", "mechPos", "rotation", "modPos"]:
+    dump_param(p)

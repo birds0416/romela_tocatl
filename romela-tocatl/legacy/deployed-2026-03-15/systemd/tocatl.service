@@ -1,0 +1,10 @@
+[Unit]
+Description=TOCATL Spider Controller
+
+[Service]
+WorkingDirectory=/home/tocatl/Desktop/dev/romela_tocatl
+ExecStart=/home/tocatl/Desktop/dev/romela_tocatl/.venv/bin/python /home/tocatl/Desktop/dev/romela_tocatl/build/tocatl_testing/WalkingExcursion_v1.py
+Restart=always
+
+[Install]
+WantedBy=default.target

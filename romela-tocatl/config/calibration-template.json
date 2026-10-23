@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "robot": "tocatl",
+  "robot_revision": "spider-art-current",
+  "created_utc": "2026-07-06T00:00:00+00:00",
+  "source": "template; fill values from supervised calibration procedure",
+  "joints": [
+    {"motor_id": 11, "leg": 1, "joint": "hip_yaw", "bus": "can1", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 12, "leg": 1, "joint": "hip_pitch", "bus": "can1", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 13, "leg": 1, "joint": "knee", "bus": "can1", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 21, "leg": 2, "joint": "hip_yaw", "bus": "can0", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 22, "leg": 2, "joint": "hip_pitch", "bus": "can0", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 23, "leg": 2, "joint": "knee", "bus": "can0", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 31, "leg": 3, "joint": "hip_yaw", "bus": "can0", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 32, "leg": 3, "joint": "hip_pitch", "bus": "can0", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 33, "leg": 3, "joint": "knee", "bus": "can0", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 41, "leg": 4, "joint": "hip_yaw", "bus": "can0", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 42, "leg": 4, "joint": "hip_pitch", "bus": "can0", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 43, "leg": 4, "joint": "knee", "bus": "can0", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 51, "leg": 5, "joint": "hip_yaw", "bus": "can1", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 52, "leg": 5, "joint": "hip_pitch", "bus": "can1", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 53, "leg": 5, "joint": "knee", "bus": "can1", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 61, "leg": 6, "joint": "hip_yaw", "bus": "can1", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 62, "leg": 6, "joint": "hip_pitch", "bus": "can1", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."},
+    {"motor_id": 63, "leg": 6, "joint": "knee", "bus": "can1", "sign": null, "zero_offset_rad": null, "min_position_rad": null, "max_position_rad": null, "park_position_rad": null, "method": "TODO", "notes": "Placeholder values are invalid for arming."}
+  ]
+}

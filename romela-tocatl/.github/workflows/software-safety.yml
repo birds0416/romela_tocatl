@@ -1,0 +1,31 @@
+name: software-safety
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "codex/**"
+
+jobs:
+  dry-run:
+    name: dry-run software checks
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run unit tests
+        run: |
+          PYTHONPATH=src/tocatl_control:src/tocatl_diagnostics \
+            python3 -m unittest discover -s test -v
+
+      - name: Run no-live-CAN dry-run gate
+        run: |
+          bash scripts/pi_dry_run_checks.sh --skip-service-check

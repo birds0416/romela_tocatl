@@ -1,0 +1,25 @@
+# TOCATL MuJoCo sim tunables. Values here are the tuned set that passes
+# test/test_walk.py and looks firm on camera; see README.md for the tuning log.
+
+mujoco_sim_node:
+  ros__parameters:
+    headless: false
+    realtime_factor: 1.0
+    joint_state_rate: 100.0
+    timestep: 0.002              # 500 Hz physics
+    foot_friction: "1.2 0.02 0.001"
+    base_mass: 6.0               # total robot ~13.6 kg
+
+gait_node:
+  ros__parameters:
+    gait: tripod                 # tripod | ripple | wave
+    stride_mm: 175.0             # legacy envelope default (20..400)
+    step_height_mm: 215.0        # legacy envelope default (0..400)
+    body_height_mm: 220.0
+    stance_radius_mm: 250.0      # wide spider stance, matches the real robot
+    kp_stance: 100.0             # legacy WalkingTestv3 stance stiffness
+    kp_swing: 10.0
+    kd: 3.0
+    kp_rate_up: 25.0             # tuned up from legacy 1.0: plant hard = firm look
+    kp_rate_down: 6.0            # legacy value
+    hip_pitch_support_tau: 0.0   # optional feedforward, max 9.25 N m

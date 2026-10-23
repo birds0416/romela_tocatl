@@ -1,0 +1,373 @@
+import can, time, subprocess, threading
+import sys, os, select 
+from CyberGearDriver import CyberGearMotor, RunMode, CyberMotorMessage
+
+def setup_can0():
+    print("\nSetting up Interface for Can 0...\n")
+ # Always bring interface down first
+    subprocess.run(["sudo", "ip", "link", "set", "can0", "down"], stderr=subprocess.DEVNULL)
+
+    # Reconfigure bitratee
+    subprocess.run(["sudo", "ip", "link", "set", "can0", "type", "can", "bitrate", "1000000"], check=True)
+
+    # Bring up interface
+    subprocess.run(["sudo", "ip", "link", "set", "can0", "up"], check=True)
+
+    # Verify interface is up
+    status0 = subprocess.run(["ifconfig", "can0"], capture_output=True, text=True).stdout
+    print("\n--- CAN0 STATUS ---")
+    print(status0)
+    print("-------------------\n")
+
+def setup_can1():
+    print("\nSetting up Interface for Can 1...\n")
+ # Always bring interface down first
+    subprocess.run(["sudo", "ip", "link", "set", "can1", "down"], stderr=subprocess.DEVNULL)
+
+    # Reconfigure bitrate
+    subprocess.run(["sudo", "ip", "link", "set", "can1", "type", "can", "bitrate", "1000000"], check=True)
+
+    # Bring up interface
+    subprocess.run(["sudo", "ip", "link", "set", "can1", "up"], check=True)
+
+    # Verify interface is up
+    status1 = subprocess.run(["ifconfig", "can1"], capture_output=True, text=True).stdout
+    print("\n--- CAN1 STATUS ---")
+    print(status1)
+    print("-------------------\n")
+
+
+setup_can0()
+setup_can1()
+
+# -------------------------------------------------------
+# CAN Setup
+# -------------------------------------------------------
+bus0 = can.interface.Bus(
+    interface='socketcan',
+    channel='can0',
+    bitrate=1000000,
+)
+
+
+bus1 = can.interface.Bus(
+    interface='socketcan',
+    channel='can1',
+    bitrate=1000000,
+)
+
+
+def send_message0(message: CyberMotorMessage):
+    bus0.send(
+        can.Message(
+            arbitration_id=message.arbitration_id,
+            data=message.data,
+            is_extended_id=message.is_extended_id,
+        )
+    )
+
+def send_message1(message: CyberMotorMessage):
+    bus1.send(
+        can.Message(
+            arbitration_id=message.arbitration_id,
+            data=message.data,
+            is_extended_id=message.is_extended_id,
+        )
+    )
+
+print("\nCAN Setup Complete!\n")
+
+# -------------------------------------------------------
+# Create motors and groups
+# -------------------------------------------------------
+leg1hipYaw = CyberGearMotor(motor_id=11, send_message=send_message1)
+leg1hipPitch = CyberGearMotor(motor_id=12, send_message=send_message1)
+leg1knee = CyberGearMotor(motor_id=13, send_message=send_message1)
+
+leg2hipYaw = CyberGearMotor(motor_id=21, send_message=send_message0)
+leg2hipPitch = CyberGearMotor(motor_id=22, send_message=send_message0)
+leg2knee = CyberGearMotor(motor_id=23, send_message=send_message0)
+
+leg3hipYaw = CyberGearMotor(motor_id=31, send_message=send_message0)
+leg3hipPitch = CyberGearMotor(motor_id=32, send_message=send_message0)
+leg3knee = CyberGearMotor(motor_id=33, send_message=send_message0)
+
+leg4hipYaw = CyberGearMotor(motor_id=41, send_message=send_message0)
+leg4hipPitch = CyberGearMotor(motor_id=42, send_message=send_message0)
+leg4knee = CyberGearMotor(motor_id=43, send_message=send_message0)
+
+leg5hipYaw = CyberGearMotor(motor_id=51, send_message=send_message1)
+leg5hipPitch = CyberGearMotor(motor_id=52, send_message=send_message1)
+leg5knee = CyberGearMotor(motor_id=53, send_message=send_message1)
+
+leg6hipYaw = CyberGearMotor(motor_id=61, send_message=send_message1)
+leg6hipPitch = CyberGearMotor(motor_id=62, send_message=send_message1)
+leg6knee = CyberGearMotor(motor_id=63, send_message=send_message1)
+
+allMotors = [  leg1hipYaw, leg1hipPitch, leg1knee,
+            leg2hipYaw, leg2hipPitch, leg2knee,
+            leg3hipYaw, leg3hipPitch, leg3knee,
+            leg4hipYaw, leg4hipPitch, leg4knee,
+            leg5hipYaw, leg5hipPitch, leg5knee,
+            leg6hipYaw, leg6hipPitch, leg6knee]
+
+rightSideMotors= [ leg1hipYaw, leg1hipPitch, leg1knee, #right side motors use CAN1
+                leg5hipYaw, leg5hipPitch, leg5knee,
+                leg6hipYaw, leg6hipPitch, leg6knee]
+
+leftSideMotors= [ leg2hipYaw, leg2hipPitch, leg2knee, #left side motors use CAN0
+                leg3hipYaw, leg3hipPitch, leg3knee,
+                leg4hipYaw, leg4hipPitch, leg4knee]
+
+allHipYaw= [ leg1hipYaw, leg2hipYaw, leg3hipYaw,
+            leg4hipYaw, leg5hipYaw, leg6hipYaw]
+
+allHipPitch= [ leg1hipPitch, leg2hipPitch, leg3hipPitch,
+            leg4hipPitch, leg5hipPitch, leg6hipPitch]
+
+allKnee= [ leg1knee, leg2knee, leg3knee,
+        leg4knee, leg5knee, leg6knee]
+
+leg1= [leg1hipYaw, leg1hipPitch, leg1knee]
+leg2= [leg2hipYaw, leg2hipPitch, leg2knee]
+leg3= [leg3hipYaw, leg3hipPitch, leg3knee]
+leg4= [leg4hipYaw, leg4hipPitch, leg4knee]
+leg5= [leg5hipYaw, leg5hipPitch, leg5knee]
+leg6= [leg6hipYaw, leg6hipPitch, leg6knee]
+
+oddYaw= [ leg1hipYaw, leg3hipYaw, leg5hipYaw]
+evenYaw= [ leg2hipYaw, leg4hipYaw, leg6hipYaw]
+
+oddPitch= [ leg1hipPitch, leg3hipPitch, leg5hipPitch]
+evenPitch= [ leg2hipPitch, leg4hipPitch, leg6hipPitch]
+
+oddKnee= [ leg1knee, leg3knee, leg5knee]
+evenKnee= [ leg2knee, leg4knee, leg6knee]
+
+# -------------------------------------------------------
+# Dispatcher and Notifiers
+# -------------------------------------------------------
+
+def dispatch_message0(msg):
+    for m in leftSideMotors:
+        m.message_received(msg)
+
+notifier0 = can.Notifier(bus0, [dispatch_message0])
+
+def dispatch_message1(msg):
+    for m in rightSideMotors:
+        m.message_received(msg)
+
+notifier1 = can.Notifier(bus1, [dispatch_message1])
+
+# -------------------------------------------------------
+# VIRTUAL E-STOP
+# -------------------------------------------------------
+ESTOP = False
+
+def estop(reason="KEYBOARD E-STOP"):
+    global ESTOP
+    if ESTOP:
+        return
+    ESTOP = True
+
+    print("\n\n==============================")
+    print(f"!!! {reason} ACTIVATED !!!")
+    print("==============================\n")
+
+    #Damp Motors
+    for _ in range(3):
+        for motor in allMotors:
+            try:
+                motor.control(position=0, velocity=0, torque=0, kp=0, kd=2.0)
+            except Exception:
+                pass
+    
+
+        
+    #Kill Motors
+    for _ in range(2):
+        for motor in allMotors:
+            try:
+                motor.stop()
+            except Exception:
+                pass
+
+
+    # Stop notifiers so no more RX callbacks happen
+    try:
+        notifier0.stop()
+    except Exception:
+        pass
+    try:
+        notifier1.stop()
+    except Exception:
+        pass
+
+    # Shutdown buses
+    try:
+        bus0.shutdown()
+    except Exception:
+        pass
+    try:
+        bus1.shutdown()
+    except Exception:
+        pass
+
+    print("Motors stopped, CAN shutdown. Exiting now.")
+    os._exit(1)  # immediate exit even if you're in time.sleep()
+
+
+def keyboard_estop_listener():
+    print("\nVirtual E-Stop ARMED: type 'e' + Enter (or 'q') at any time.\n")
+    while True:
+        r, _, _ = select.select([sys.stdin], [], [], 0.05)
+        if r:
+            key = sys.stdin.readline().strip().lower()
+            if key in ("e", "q", "estop", "stop"):
+                estop("VIRTUAL E-STOP")
+
+threading.Thread(target=keyboard_estop_listener, daemon=True).start()
+
+# -------------------------------------------------------
+# END VIRTUAL E-STOP
+# -------------------------------------------------------
+
+
+# -------------------------------------------------------
+# Kill all motors just in case
+# -------------------------------------------------------
+for motor in allMotors:
+    motor.stop()
+
+# -------------------------------------------------------
+# Set motor modes
+# -------------------------------------------------------
+for motor in allMotors:
+    motor.mode(RunMode.OPERATION_CONTROL)
+
+# -------------------------------------------------------
+# Enable All Motors
+# -------------------------------------------------------
+for motor in allMotors:
+    motor.enable()
+
+# -------------------------------------------------------
+# Initialization Sequence
+# -------------------------------------------------------
+initial_positions = {}
+for motor in allMotors:
+    motor.request_motor_state()
+    pos = motor.state.get("position")
+    initial_positions[motor.motor_id] = pos
+    print(f"Motor ID {motor.motor_id} Init Pos:", pos)
+
+# -------------------------------------------------------
+# Zero Hip Pitch and Knee Motors
+# -------------------------------------------------------
+
+    #   For this to work, ensure that the legs are resting on 
+    #   the wire protectors and fully retracted.
+
+for motor in allHipPitch + allKnee:
+    motor.set_zero_position()
+
+# -------------------------------------------------------
+# Physically Zero the Hip Yaw Motors
+# -------------------------------------------------------
+
+    #   The hip yaw will collide with the leg shells,
+    #   and then use that position to determine the center.
+
+""" (insert Bonk code here)"""
+
+    #   For the sake of this test we are skipping the bonk
+
+
+for motor in allHipYaw:
+    motor.set_zero_position()
+
+# -------------------------------------------------------
+# Deploying Legs to Pre-standing Position
+# -------------------------------------------------------
+for leg in [leg1, leg2, leg3, leg4, leg5, leg6]:
+      leg[1].control(position=1.40, velocity=0, torque=0, kp=3, kd=1)  # hipPitch
+      leg[2].control(position=-0.6, velocity=0, torque=0, kp=3, kd=1)  # knee
+
+time.sleep(2)
+
+print("\nLocking Hip Yaw in 3...\n")
+time.sleep(1)
+print("\n2...\n")
+time.sleep(1)
+print("\n1...\n")
+time.sleep(1)
+
+# -------------------------------------------------------
+# Locking Yaw
+# -------------------------------------------------------
+
+for motor in allHipYaw:
+    motor.control(position=0, velocity=0, torque=0, kp=5, kd=3)
+
+print("\nHip Yaw Locked!\n")
+
+time.sleep(5)
+
+
+print("Increasing torque to 7 N-m in 3...")
+print("\n2...\n")
+time.sleep(1)
+print("\n1...\n")
+time.sleep(1)
+
+for leg in [leg1, leg2, leg3, leg4, leg5, leg6]:
+     leg[1].control(position=1.50, velocity=0, torque=7, kp=3, kd=1)  # hipPitch
+     leg[2].control(position=-0.6, velocity=0, torque=0, kp=3, kd=1)  # knee
+
+# print("Increasing torque to 8 N-m in 3...")
+# print("\n2...\n")
+# time.sleep(1)
+# print("\n1...\n")
+# time.sleep(1)
+
+# for leg in [leg1, leg2, leg3, leg4, leg5, leg6]:
+#      leg[1].control(position=1.50, velocity=0, torque=8, kp=3, kd=1)  # hipPitch
+#      leg[2].control(position=-0.6, velocity=0, torque=0, kp=3, kd=1)  # knee
+
+
+# print("Increasing torque to 8.5 N-m in 3...")
+# print("\n2...\n")
+# time.sleep(1)
+# print("\n1...\n")
+# time.sleep(1)
+
+# for leg in [leg1, leg2, leg3, leg4, leg5, leg6]:
+#      leg[1].control(position=1.50, velocity=0, torque=8.5, kp=3, kd=1)  # hipPitch
+#      leg[2].control(position=-0.6, velocity=0, torque=0, kp=3, kd=1)  # knee
+
+
+time.sleep(5)
+
+# -------------------------------------------------------
+# Shutdown
+# -------------------------------------------------------
+print("Shutting Down")
+
+
+#Damping
+for motor in allMotors:
+
+    motor.request_motor_state()
+    pos = motor.state.get("position")
+    motor.control(position=pos, velocity=0, torque=0, kp=0, kd=2.0)
+
+time.sleep(3)
+
+#Shutting Down
+for motor in allMotors:
+    motor.stop()
+
+time.sleep(1)
+bus0.shutdown()
+bus1.shutdown()
